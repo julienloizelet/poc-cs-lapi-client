@@ -45,8 +45,8 @@ class Request extends AbstractMessage
         string $method,
         array $headers = [],
         array $parameters = [],
-        array $configs = [])
-    {
+        array $configs = []
+    ) {
         $this->uri = $uri;
         $this->method = $method;
         $this->headers = array_merge($this->headers, $headers);

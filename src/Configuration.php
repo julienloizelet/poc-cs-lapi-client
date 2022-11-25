@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace CrowdSec\LapiClient;
 
+use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -48,10 +50,12 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * LAPI connection settings
+     * LAPI connection settings.
      *
      * @param NodeDefinition|ArrayNodeDefinition $rootNode
+     *
      * @return void
+     *
      * @throws InvalidArgumentException
      */
     private function addConnectionNodes($rootNode)
@@ -82,15 +86,13 @@ class Configuration implements ConfigurationInterface
         ->end();
     }
 
-
-
-
-
     /**
-     * Conditional validation
+     * Conditional validation.
      *
      * @param NodeDefinition|ArrayNodeDefinition $rootNode
+     *
      * @return void
+     *
      * @throws InvalidArgumentException
      * @throws RuntimeException
      */
@@ -98,25 +100,27 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode->validate()
             ->ifTrue(function (array $v) {
-                if ($v['auth_type'] === Constants::AUTH_KEY && empty($v['api_key'])) {
+                if (Constants::AUTH_KEY === $v['auth_type'] && empty($v['api_key'])) {
                     return true;
                 }
+
                 return false;
             })
             ->thenInvalid('Api key is required as auth type is api_key')
             ->end()
             ->validate()
             ->ifTrue(function (array $v) {
-                if ($v['auth_type'] === Constants::AUTH_TLS) {
+                if (Constants::AUTH_TLS === $v['auth_type']) {
                     return empty($v['tls_cert_path']) || empty($v['tls_key_path']);
                 }
+
                 return false;
             })
             ->thenInvalid('Bouncer certificate and key paths are required for tls authentification.')
             ->end()
             ->validate()
             ->ifTrue(function (array $v) {
-                if ($v['auth_type'] === Constants::AUTH_TLS && $v['tls_verify_peer'] === true) {
+                if (Constants::AUTH_TLS === $v['auth_type'] && true === $v['tls_verify_peer']) {
                     return empty($v['tls_ca_cert_path']);
                 }
 

@@ -24,9 +24,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class AbstractClient
 {
-
     /**
-     * @var Separator
+     * @var string Separator
      */
     public const SEP = ',';
     /**
@@ -128,7 +127,7 @@ abstract class AbstractClient
 
         $body = $response->getJsonBody();
         $decoded = [];
-        if (!empty($body) && $body !== 'null') {
+        if (!empty($body) && 'null' !== $body) {
             $decoded = json_decode($response->getJsonBody(), true);
 
             if (null === $decoded) {

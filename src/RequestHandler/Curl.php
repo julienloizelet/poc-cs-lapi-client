@@ -73,6 +73,25 @@ class Curl implements RequestHandlerInterface
         return curl_getinfo($handle, \CURLINFO_HTTP_CODE);
     }
 
+    private function handleSslOptions($configs): array
+    {
+        $result = [\CURLOPT_SSL_VERIFYPEER => false];
+        if (isset($configs['auth_type']) && Constants::AUTH_TLS === $configs['auth_type']) {
+            $verifyPeer = $configs['tls_verify_peer'] ?? true;
+            $result[\CURLOPT_SSL_VERIFYPEER] = $verifyPeer;
+            //   The --cert option
+            $result[\CURLOPT_SSLCERT] = $configs['tls_cert_path'] ?? '';
+            // The --key option
+            $result[\CURLOPT_SSLKEY] = $configs['tls_key_path'] ?? '';
+            if ($verifyPeer) {
+                // The --cacert option
+                $result[\CURLOPT_CAINFO] = $configs['tls_ca_cert_path'] ?? '';
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * Retrieve Curl options.
      *
@@ -101,19 +120,7 @@ class Curl implements RequestHandlerInterface
             }
         }
 
-        $options[\CURLOPT_SSL_VERIFYPEER] = false;
-        if (isset($configs['auth_type']) && Constants::AUTH_TLS === $configs['auth_type']) {
-            $verifyPeer = $configs['tls_verify_peer'] ?? true;
-            $options[\CURLOPT_SSL_VERIFYPEER] = $verifyPeer;
-            //   The --cert option
-            $options[\CURLOPT_SSLCERT] = $configs['tls_cert_path'] ?? '';
-            // The --key option
-            $options[\CURLOPT_SSLKEY] = $configs['tls_key_path'] ?? '';
-            if ($verifyPeer) {
-                // The --cacert option
-                $options[\CURLOPT_CAINFO] = $configs['tls_ca_cert_path'] ?? '';
-            }
-        }
+        $options = array_merge($options, $this->handleSslOptions($configs));
 
         if ('POST' === strtoupper($method)) {
             $options[\CURLOPT_POST] = true;

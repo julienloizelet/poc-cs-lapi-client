@@ -17,6 +17,7 @@ namespace CrowdSec\LapiClient\Tests\Unit;
  * @license   MIT License
  */
 
+use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\HttpMessage\Request;
 use CrowdSec\LapiClient\RequestHandler\FileGetContents;
@@ -24,7 +25,6 @@ use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
 use CrowdSec\LapiClient\Tests\MockedData;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
-use CrowdSec\LapiClient\Bouncer;
 
 /**
  * @uses \CrowdSec\LapiClient\AbstractClient

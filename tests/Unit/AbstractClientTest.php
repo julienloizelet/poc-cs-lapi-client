@@ -15,13 +15,13 @@ namespace CrowdSec\LapiClient\Tests\Unit;
  * @license   MIT License
  */
 
+use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\HttpMessage\Response;
 use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\MockedData;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
-use CrowdSec\LapiClient\Bouncer;
 
 /**
  * @uses \CrowdSec\LapiClient\HttpMessage\Response

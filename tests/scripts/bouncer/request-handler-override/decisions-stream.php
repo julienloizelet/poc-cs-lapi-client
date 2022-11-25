@@ -2,9 +2,9 @@
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\Constants;
+use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 
 $startup = isset($argv[1]) ? (bool) $argv[1] : false;
 $filter = isset($argv[2]) ? json_decode($argv[2], true)
@@ -17,10 +17,15 @@ if (is_null($filter)) {
 }
 
 echo \PHP_EOL . 'Instantiate bouncer ...' . \PHP_EOL;
-$configs = [
+// Config to use an Api Key for connection
+$apiKeyConfigs = [
     'auth_type' => 'api_key',
     'api_url' => 'https://crowdsec:8080',
     'api_key' => '6a20918e3cb13f622160688b1848397d',
+];
+// Config to use TLS for connection
+$tlsConfigs = [
+    'auth_type' => 'tls',
     'user_agent_suffix' => 'LapiClientTest',
     'tls_cert_path' => '/var/www/html/cfssl/bouncer.pem',
     'tls_key_path' => '/var/www/html/cfssl/bouncer-key.pem',
@@ -29,7 +34,7 @@ $configs = [
 ];
 echo \PHP_EOL . 'Instantiate custom request handler ...' . \PHP_EOL;
 $customRequestHandler = new FileGetContents();
-$client = new Bouncer($configs, $customRequestHandler);
+$client = new Bouncer($apiKeyConfigs, $customRequestHandler);
 echo 'Bouncer instantiated' . \PHP_EOL;
 
 echo 'Calling ' . $client->getConfig('api_url') . ' for decisions stream ...' . \PHP_EOL;

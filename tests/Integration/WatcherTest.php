@@ -14,12 +14,12 @@ namespace CrowdSec\LapiClient\Tests\Integration;
  */
 
 use CrowdSec\LapiClient\AbstractClient;
+use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
-use CrowdSec\LapiClient\Bouncer;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Util\Exception;
 

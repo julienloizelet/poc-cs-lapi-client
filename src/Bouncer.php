@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CrowdSec\LapiClient;
 
 use CrowdSec\LapiClient\RequestHandler\RequestHandlerInterface;
-use CrowdSec\LapiClient\Storage\StorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Config\Definition\Processor;
 
@@ -51,16 +50,15 @@ class Bouncer extends AbstractClient
         parent::__construct($this->configs, $requestHandler, $logger);
     }
 
-
     /**
      * Process a decisions stream call to LAPI.
      *
      * @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisionsStream
      */
     public function getStreamDecisions(
-        bool $startup = false,
-        array $filter = []): array
-    {
+        bool $startup,
+        array $filter = []
+    ): array {
         return $this->manageRequest(
             'GET',
             self::DECISIONS_STREAM_ENDPOINT,
@@ -68,13 +66,12 @@ class Bouncer extends AbstractClient
         );
     }
 
-
     /**
      * Process a decisions call to LAPI.
      *
      * @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisions
      */
-    public function getDecisions(array $filter = []):array
+    public function getDecisions(array $filter = []): array
     {
         return $this->manageRequest(
             'GET',
@@ -92,7 +89,6 @@ class Bouncer extends AbstractClient
         $processor = new Processor();
         $this->configs = $processor->processConfiguration($configuration, [$configs]);
     }
-
 
     /**
      * Format User-Agent header. <PHP CAPI client prefix>_<custom suffix>/<vX.Y.Z>.

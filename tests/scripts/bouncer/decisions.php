@@ -13,17 +13,22 @@ if (is_null($filter)) {
 }
 
 echo \PHP_EOL . 'Instantiate bouncer ...' . \PHP_EOL;
-$configs = [
-    'auth_type' => 'tls',
+// Config to use an Api Key for connection
+$apiKeyConfigs = [
+    'auth_type' => 'api_key',
     'api_url' => 'https://crowdsec:8080',
     'api_key' => '6a20918e3cb13f622160688b1848397d',
+];
+// Config to use TLS for connection
+$tlsConfigs = [
+    'auth_type' => 'tls',
     'user_agent_suffix' => 'LapiClientTest',
     'tls_cert_path' => '/var/www/html/cfssl/bouncer.pem',
     'tls_key_path' => '/var/www/html/cfssl/bouncer-key.pem',
     'tls_verify_peer' => true,
     'tls_ca_cert_path' => '/var/www/html/cfssl/ca-chain.pem',
-    ];
-$client = new Bouncer($configs);
+];
+$client = new Bouncer($apiKeyConfigs);
 echo 'Bouncer instantiated' . \PHP_EOL;
 
 echo 'Calling ' . $client->getConfig('api_url') . ' for decisions ...' . \PHP_EOL;
