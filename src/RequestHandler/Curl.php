@@ -19,7 +19,7 @@ use CrowdSec\LapiClient\HttpMessage\Response;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-class Curl implements RequestHandlerInterface
+class Curl extends AbstractRequestHandler implements RequestHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -73,21 +73,24 @@ class Curl implements RequestHandlerInterface
         return curl_getinfo($handle, \CURLINFO_HTTP_CODE);
     }
 
-    private function handleSslOptions($configs): array
+    private function handleConfigs(): array
     {
         $result = [\CURLOPT_SSL_VERIFYPEER => false];
-        if (isset($configs['auth_type']) && Constants::AUTH_TLS === $configs['auth_type']) {
-            $verifyPeer = $configs['tls_verify_peer'] ?? true;
+        $authType = $this->getConfig('auth_type');
+        if ($authType && Constants::AUTH_TLS === $authType) {
+            $verifyPeer = $this->getConfig('tls_verify_peer') ?? true;
             $result[\CURLOPT_SSL_VERIFYPEER] = $verifyPeer;
             //   The --cert option
-            $result[\CURLOPT_SSLCERT] = $configs['tls_cert_path'] ?? '';
+            $result[\CURLOPT_SSLCERT] = $this->getConfig('tls_cert_path') ?? '';
             // The --key option
-            $result[\CURLOPT_SSLKEY] = $configs['tls_key_path'] ?? '';
+            $result[\CURLOPT_SSLKEY] = $this->getConfig('tls_key_path') ?? '';
             if ($verifyPeer) {
                 // The --cacert option
-                $result[\CURLOPT_CAINFO] = $configs['tls_ca_cert_path'] ?? '';
+                $result[\CURLOPT_CAINFO] = $this->getConfig('tls_ca_cert_path') ?? '';
             }
         }
+        $timeout = $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
+        $result[\CURLOPT_TIMEOUT] = $timeout;
 
         return $result;
     }
@@ -103,7 +106,6 @@ class Curl implements RequestHandlerInterface
         $method = $request->getMethod();
         $url = $request->getUri();
         $parameters = $request->getParams();
-        $configs = $request->getConfigs();
         if (!isset($headers['User-Agent'])) {
             throw new ClientException('User agent is required', 400);
         }
@@ -119,8 +121,8 @@ class Curl implements RequestHandlerInterface
                 $options[\CURLOPT_HTTPHEADER][] = sprintf('%s:%s', $key, $value);
             }
         }
-
-        $options = array_merge($options, $this->handleSslOptions($configs));
+        // We need to keep keys indexes
+        $options += $this->handleConfigs();
 
         if ('POST' === strtoupper($method)) {
             $options[\CURLOPT_POST] = true;

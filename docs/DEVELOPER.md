@@ -1,31 +1,11 @@
 ![CrowdSec Logo](images/logo_crowdsec.png)
-# CrowdSec CAPI PHP client
+# CrowdSec LAPI PHP client
 
 ## Developer guide
 
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**
-
-- [Local development](#local-development)
-  - [DDEV setup](#ddev-setup)
-    - [DDEV installation](#ddev-installation)
-    - [Prepare DDEV PHP environment](#prepare-ddev-php-environment)
-  - [DDEV Usage](#ddev-usage)
-    - [Use composer to update or install the lib](#use-composer-to-update-or-install-the-lib)
-    - [Unit test](#unit-test)
-    - [Integration test](#integration-test)
-    - [Coding standards](#coding-standards)
-      - [PHPCS Fixer](#phpcs-fixer)
-      - [PHPSTAN](#phpstan)
-      - [PHP Mess Detector](#php-mess-detector)
-      - [PHPCS and PHPCBF](#phpcs-and-phpcbf)
-      - [PSALM](#psalm)
-      - [PHP Unit Code coverage](#php-unit-code-coverage)
-- [Commit message](#commit-message)
-  - [Allowed message `type` values](#allowed-message-type-values)
-- [Release process](#release-process)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -70,6 +50,12 @@ crowdsec-lapi-client-dev-project (choose the name you want for this folder)
 └───.ddev (do not change this folder name)
 │   │   
 │   │ (Cloned sources of a PHP specific ddev repo)
+│    
+│   
+└─── cfssl (do not change this folder name)
+│   │   
+│   │ (Copy of some provided files for TLS authentification)  
+│
 │   
 └───my-own-modules (do not change this folder name)
     │   
@@ -85,7 +71,7 @@ crowdsec-lapi-client-dev-project (choose the name you want for this folder)
 mkdir crowdsec-lapi-client-dev-project
 ```
 
-- Create a `lapi-client` folder with sources of this repo:
+- Create a `my-own-modules/lapi-client` folder with sources of this repo:
 
 ```bash
 cd crowdsec-lapi-client-dev-project
@@ -100,11 +86,24 @@ cd crowdsec-lapi-client-dev-project
 mkdir .ddev && cd .ddev && git clone git@github.com:julienloizelet/ddev-php.git ./
 ```
 
+Copy the CrowdSec related docker-compose file: 
+```bash
+cd crowdsec-lapi-client-dev-project
+cp .ddev/additional_docker_compose/docker-compose.crowdsec.yaml .ddev/docker-compose.crowdsec.yaml
+```
+
+Then, as we use a TLS ready CrowdSec container, you have to copy some certificates and key in a `cfssl` folder:
+
+```bash
+mkdir cfssl
+cp -r ../.ddev/custom_files/crowdsec/cfssl/* cfssl
+```
+
 By default, ddev will launch a PHP 7.2 container. If you want to work with another PHP version, copy the
 corresponding config file. For example:
 
 ```bash
-cd crowdsec-lapi-client-dev-project
+
 cp .ddev/config_overrides/config.php74.yaml .ddev/config.php74.yaml
 ```
 - Launch DDEV
@@ -242,7 +241,7 @@ global or difficult to assign to a specific part.
 
 Example:
 
-    feat(watcher): Add a new endpoint for watcher
+    feat(bouncer): Add a new endpoint for bouncer
 
 
 You can use the `commit-msg` git hook that you will find in the `.githooks` folder : 

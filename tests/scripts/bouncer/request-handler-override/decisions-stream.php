@@ -26,6 +26,7 @@ $apiKeyConfigs = [
 // Config to use TLS for connection
 $tlsConfigs = [
     'auth_type' => 'tls',
+    'api_url' => 'https://crowdsec:8080',
     'user_agent_suffix' => 'LapiClientTest',
     'tls_cert_path' => '/var/www/html/cfssl/bouncer.pem',
     'tls_key_path' => '/var/www/html/cfssl/bouncer-key.pem',

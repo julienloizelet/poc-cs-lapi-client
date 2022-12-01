@@ -13,15 +13,13 @@
 
 ## Description
 
-This client allows you to interact with the CrowdSec Central API (CAPI).
+This client allows you to interact with the CrowdSec Local API (LAPI).
 
 ## Features
 
 - CrowdSec LAPI Bouncer available endpoints
-  - Push signals
   - Retrieve decisions stream list
-  - Enroll a watcher
-- Automatic management of watcher credentials (password, machine_id and login token)
+  - Retrieve decisions for some filter
 - Overridable request handler (`curl` by default, `file_get_contents` also available)
 
 
@@ -29,29 +27,24 @@ This client allows you to interact with the CrowdSec Central API (CAPI).
 
 ### Installation
 
-First, install CrowdSec CAPI PHP Client via the [composer](https://getcomposer.org/) package manager:
+First, install CrowdSec LAPI PHP Client via the [composer](https://getcomposer.org/) package manager:
 ```bash
-composer require crowdsec/capi-client
+composer require crowdsec/lapi-client
 ```
 
 Please see the [Installation Guide](./INSTALLATION_GUIDE.md) for mor details.
 
-### Watcher instantiation
+### Bouncer client instantiation
 
-To instantiate a watcher, you have to:
-
-
-- Pass its `scenarios` in a `configs` array as a first parameter. You will find below [the list of other available 
-  settings](#watcher-configurations).
+To instantiate a bouncer client, you have to:
 
 
-- Pass an implementation of the provided `StorageInterface` in the second parameter. For this quick start, we will 
-  use a basic `FileStorage` implementation, but we advise you to develop a more secured class as we are storing sensitive data.
+- Pass its `configs` array as a first parameter. You will find below [the list of other available 
+  settings](#bouncer-client-configurations).
 
 
-- Optionally, you can pass an implementation of the `RequestHandlerInterface` as a third 
-  parameter. By default, a 
-  `Curl` request handler will be used.
+- Optionally, you can pass an implementation of the `RequestHandlerInterface` as a second 
+  parameter. By default, a `Curl` request handler will be used.
 
 
 - Optionally, to log some information, you can pass an implementation of the `Psr\Log\LoggerInterface` as a fourth 
@@ -61,108 +54,172 @@ To instantiate a watcher, you have to:
 use CrowdSec\LapiClient\Bouncer;
 use Crowdsec\LapiClient\Storage\FileStorage;
 
-$configs = ['scenarios' => ['crowdsecurity/http-backdoors-attempts']];
-$storage = new FileStorage();
-$client = new Bouncer($configs, $storage);
+$configs = [
+    'auth_type' => 'api_key',
+    'api_url' => 'https://your-crowdsec-lapi-url:8080',
+    'api_key' => '**************************',
+];
+$client = new Bouncer($configs);
 ````
 
-By default, a watcher will use the CrowdSec development environment. If you are ready to use the CrowdSec production 
-environment, you have to add the key `env` with value `prod` in the `$configs` array: 
-```php
-$configs = [
-        'scenarios' => ['crowdsecurity/http-backdoors-attempts'], 
-        'env' => 'prod'
-];
-$client = new WatcherClient($configs, $storage);
-```
+#### LAPI calls
 
-#### CAPI calls
+Once your bouncer client is instantiated, you can perform the following calls:
 
-Once your watcher is instantiated, you can perform the following calls:
-
-
-##### Push signals
-
-You can push an array of signals to CAPI:
-
-```php
-/**
-* @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=CAPI#/watchers/post_signals for fields details
- */
-$signals = ['...'];
-$client->pushSignals($signals);
-```
 
 ##### Get Decisions stream list
 
 To retrieve the list of top decisions, you can do the following call:
 
 ```php
-$client->getStreamDecisions();
+$client->getStreamDecisions($startup, $filter);
 ```
 
-##### Enroll a watcher
+- The first parameter `$startup` is a boolean:
+  - When the `$startup` flag is true, all the decisions are returned.
+  - When the `$startup` flag is false, only the decisions updates (add or remove) from the last stream call are returned.
 
-To enroll a watcher you have to specify:
+- The second parameter `$filter` is an array. Please see the [CrowdSec LAPI documentation](https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisionsStream) for more details about available 
+  filters (scopes, origins, scenarios, etc.).
 
-- The `name` that will be display in the console for the instance
-- An `overwrite` boolean to force enroll the instance or not
-- An `enrollKey` that is generated in your CrowdSec backoffice account (a.k.a. `enrollement key`)
-- Optionally, an array of `tags` to apply on the console for the instance
 
+##### Get filtered Decisions
+
+To retrieve information about existing decisions, you can do the following call:
 
 ```php
-$client->enroll('MyWatcher', true, '*****************', ['my_tag']);
+$client->getFilteredDecisions($filter);
 ```
 
-## Watcher configurations
+The `$filter` parameter is an array. Please see the [CrowdSec LAPI documentation](https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisions) for more details about available filters (scope, value, type, etc.).
 
-The first parameter `$configs` of the Watcher constructor can be used to pass the following settings:
 
-### Environment
 
-```php
-$configs = [
-        ... 
-        'env' => 'prod'
-        ...
-];
-```
+## Bouncer client configurations
 
-The `env` setting only accepts two values : `dev` and `prod`. 
+The first parameter `$configs` of the Bouncer constructor can be used to pass the following settings:
 
-This setting is not required. If you don't set any value, `dev` will be used by default.
 
-It will mainly change the called CAPI url:
-- `https://api.dev.crowdsec.net/v2/` for the `dev` environment
-- `https://api.crowdsec.net/v2/` for the `prod` one.
+### LAPI url
 
-You should also use it in your own code to implement different behaviors depending on the environment. For example, the `FileStorage` class accepts a second parameter `$env` in its constructor to manage distinct `dev` and `prod`credential files.
+Define the URL to your LAPI server, default to `http://localhost:8080`.
 
-### Machine Id prefix
-
+### Authorization type for connection
 
 ```php
 $configs = [
         ... 
-        'machine_id_prefix' => 'mycustomwatcher'
+        'auth_type' => 'api_key'
         ...
 ];
 ```
 
-This setting is not required.
+The `auth_type` setting only accepts two values : `api_key` and `tls`. 
 
-When you make your first call with a watcher, a `machine_id` will be generated and stored through your storage 
-implementation. This `machine_id` is a string of length 48 composed of characters matching the regular expression `#^[a-z0-9]+$#`.
+This setting is not required. If you don't set any value, `api_key` will be used by default.
 
-The `machine_id_prefix` setting allows to set a custom prefix to this `machine_id`. It must be a string with a length 
-less than or equal to 16 and matching the regular expression `#^[a-z0-9]+$#` too. 
+The `api_key` value means that you will also add an `api_key` setting (see below) and that this Api key will be used to connect LAPI.
 
-The final generated `machine_id` will still have a length of 48.
+The `tls` value means that you will use some SSL certificates to connect LAPI. Thus, you will have to take care about the 
+followings settings too : `tls_cert_path`, `tls_key_path`, `tls_verify_peer`, `tls_ca_cert_path`.
 
-Beware that changing `machine_id_prefix` between two watcher instantiations may imply a new `machine_id\password` 
-pair generation and registration.
+TLS authentication is only available if you use CrowdSec agent with a version superior to 1.4.0
 
+
+### Settings for Api key authorization
+
+
+#### Api key
+
+```php
+$configs = [
+        ... 
+        'api_key' => '********************************'
+        ...
+];
+```
+
+Key generated by the cscli (CrowdSec cli) command like `cscli bouncers add my-bouncer-name`
+
+
+Only required if you choose `api_key` as `auth_type`
+
+
+### Settings for TLS authorization
+
+
+#### Bouncer certificate path
+
+```php
+$configs = [
+        ... 
+        'tls_cert_path' => '/var/www/html/cfssl/bouncer.pem'
+        ...
+];
+```
+
+Absolute path to the bouncer certificate. 
+
+Only required if you choose `tls` as `auth_type`.
+
+
+#### Bouncer key path
+
+```php
+$configs = [
+        ... 
+        'tls_key_path' => '/var/www/html/cfssl/bouncer-key.pem'
+        ...
+];
+```
+
+Absolute path to the bouncer key.
+
+Only required if you choose `tls` as `auth_type`.
+
+#### Peer verification
+
+```php
+$configs = [
+        ... 
+        'tls_verify_peer' => true
+        ...
+];
+```
+
+This option determines whether request handler verifies the authenticity of the peer's certificate.
+
+When negotiating a TLS or SSL connection, the server sends a certificate indicating its identity. 
+If `tls_verify_peer` is set to true, request handler verifies whether the certificate is authentic. 
+This trust is based on a chain of digital signatures, rooted in certification authority (CA) certificates you supply using the `tls_ca_cert_path` setting below.
+
+
+#### CA certificate path
+
+```php
+$configs = [
+        ... 
+        'tls_ca_cert_path' => '/var/www/html/cfssl/ca-chain.pem'
+        ...
+];
+```
+
+Absolute path to the CA used to process peer verification.
+
+Only required if you choose `tls` as `auth_type` and `tls_verify_peer` is `true`.
+
+
+### LAPI timeout
+
+```php
+$configs = [
+        ... 
+        'api_timeout' => 15
+        ...
+];
+```
+
+In seconds. The timeout when calling LAPI. Must be greater or equal than 1. Default to 5 seconds if not set.
 
 ### User Agent suffix
 
@@ -175,66 +232,22 @@ $configs = [
 ```
 This setting is not required.
 
-Sending a `User-Agent` header during a CAPI call is mandatory. By default, user agent will be `csphpcapi/vX.Y.Z` where 
+Sending a `User-Agent` header during a LAPI call is mandatory. By default, user agent will be `csphplapi/vX.Y.Z` where 
 `vX.Y.Z` is the current release version of this library.
 
 You can add a custom suffix to this value by using the `user_agent_suffix` setting. It must be a string with a length
 less than or equal to 16 and matching the regular expression `#^[A-Za-z0-9]+$#`.
 
-With the example setting above, result will be  `csphpcapi_MySuffix/vX.Y.Z`.
+With the example setting above, result will be  `csphplapi_MySuffix/vX.Y.Z`.
 
-
-### Scenarios
-
-```php
-$configs = [
-        ... 
-        'scenarios' => ['crowdsecurity/http-backdoors-attempts', 'crowdsecurity/http-bad-user-agent']
-        ...
-];
-```
-
-This `scenarios` setting is required.
-
-You have to pass an array of CrowdSec scenarios that will be used to log in your watcher. 
-You should find a list of available scenarios on the [CrowdSec hub collections page](https://hub.crowdsec.net/browse/).
-
-## Storage implementation
-
-The purpose of the `Storage/StorageInterface.php` interface is to give a guide on how to store and retrieve all 
-required data for interact with CAPI as a watcher.
-
-Note that you have to implement 8 methods : 
-
-- `retrieveMachineId`: Returns the stored `machine_id` or `null` if not found.
-
-- `retrievePassword`: Returns the stored `password` or `null` if not found.
-
-- `retrieveScenarios`: Returns the stored array of `scenarios` or `null` if not found.
-
-- `retrieveToken`: Returns the stored `token` or `null` if not found.
-
-- `storeMachineId`: Stores a `machine_id` in your storage. Returns `true` on success and `false` otherwise.
-
-- `storePassword`: Stores a `password` in your storage. Returns `true` on success and `false` otherwise.
-
-- `storeScenarios`: Stores a `scenarios` array in your storage. Returns `true` on success and `false` otherwise.
-
-- `storeToken`: Stores a `token` array in your storage. Returns `true` on success and `false` otherwise.
-
-As an example, you should look on the `Storage/FileStorage.php` class that stores and retrieves data from some
-files on your filesystem.
-
-Beware that this example is not secure enough as we are talking here about sensitive data like `password`, `token`
-and `machine_id`.
 
 
 ## Override the curl request handler
 
 ### Custom implementation
 
-By default, the `Watcher` object will do curl requests to call the CAPI. If for some reason, you don't want to 
-use curl then you can create your own request handler class and pass it as a second parameter of the `Watcher` 
+By default, the `Bouncer` object will do curl requests to call the LAPI. If for some reason, you don't want to 
+use curl then you can create your own request handler class and pass it as a second parameter of the `Bouncer` 
 constructor. 
 
 Your custom request handler class must implement the `RequestHandlerInterface` interface, and you will have to 
@@ -267,7 +280,7 @@ class CustomRequestHandler implements RequestHandlerInterface
 }
 ```
 
-Once you have your custom request handler, you can instantiate the watcher that will use it:
+Once you have your custom request handler, you can instantiate the bouncer that will use it:
 
 ```php
 use CrowdSec\LapiClient\Bouncer;
@@ -275,10 +288,10 @@ use CustomRequestHandler;
 
 $requestHandler = new CustomRequestHandler();
 
-$client = new Bouncer($configs, $storage, $requestHandler);
+$client = new Bouncer($configs, $requestHandler);
 ```
 
-Then, you can make any of the CAPI calls that we have seen above.
+Then, you can make any of the LAPI calls that we have seen above.
 
 
 ### Ready to use `file_get_contents` implementation
@@ -292,7 +305,7 @@ use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 
 $requestHandler = new FileGetContents();
 
-$client = new Bouncer($configs, $storage, $requestHandler);
+$client = new Bouncer($configs, $requestHandler);
 ```
 
 ## Example scripts
@@ -301,7 +314,7 @@ $client = new Bouncer($configs, $storage, $requestHandler);
 You will find some ready-to-use php scripts in the `tests/scripts` folder. These scripts could be usefully to better 
 understand what you can do with this client. 
 
-As Watcher methods need at least an array as parameter, we use a json format in command line.
+As Bouncer methods need at least an array as parameter, we use a json format in command line.
 
 
 ### Get decisions stream
@@ -309,46 +322,32 @@ As Watcher methods need at least an array as parameter, we use a json format in 
 #### Command usage
 
 ```php
-php tests/scripts/watcher/decisions-stream.php <SCENARIOS_JSON>
+php tests/scripts/bouncer/decisions-stream.php <STARTUP> <FILTER_JSON>
 ```
 
 #### Example usage
 
 ```bash
-php tests/scripts/watcher/decisions-stream.php '["crowdsecurity/http-backdoors-attempts", "crowdsecurity/http-bad-user-agent"]'
+php tests/scripts/bouncer/decisions-stream.php 1 '{"scopes":"Ip"}'
 ```
 
 Or, with the `file_get_contents` handler:
 
 ```bash
-php tests/scripts/watcher/request-handler-override/decisions-stream.php '["crowdsecurity/http-backdoors-attempts", "crowdsecurity/http-bad-user-agent"]'
+php tests/scripts/bouncer/request-handler-override/decisions-stream.php 1 '{"scopes":"Ip"}'
 ```
 
-### Push signals
+### Get filtered decisions
 
 #### Command usage
 
 ```php
-php tests/scripts/watcher/signals.php <SCENARIOS_JSON> <SIGNALS_JSON>
+php tests/scripts/bouncer/decisions-filter.php <FILTER_JSON>
 ```
 
 #### Example
 
 ```bash
-php tests/scripts/watcher/signals.php '["crowdsecurity/http-backdoors-attempts", "crowdsecurity/http-bad-user-agent"]' '[{"message":"Ip 1.1.1.1 performed crowdsecurity/http-path-traversal-probing (6 events over 29.992437958s) at 2020-11-06 20:14:11.189255784 +0000 UTC m=+52.785061338","scenario":"crowdsecurity/http-path-traversal-probing","scenario_hash":"","scenario_version":"","source":{"id":1,"as_name":"TEST","cn":"FR","ip":"1.1.1.1","latitude":48.9917,"longitude":1.9097,"range":"1.1.1.1\/32","scope":"Ip","value":"1.1.1.1"},"start_at":"2020-11-06T20:13:41.196817737Z","stop_at":"2020-11-06T20:14:11.189252228Z"},{"message":"Ip 2.2.2.2 performed crowdsecurity/http-probing (6 events over 29.992437958s) at 2020-11-06 20:14:11.189255784 +0000 UTC m=+52.785061338","scenario":"crowdsecurity/http-probing","scenario_hash":"","scenario_version":"","source":{"id":2,"as_name":"TEST","cn":"FR","ip":"2.2.2.2","latitude":48.9917,"longitude":1.9097,"range":"2.2.2.2\/32","scope":"Ip","value":"2.2.2.2"},"start_at":"2020-11-06T20:13:41.196817737Z","stop_at":"2020-11-06T20:14:11.189252228Z"}]'
+php tests/scripts/bouncer/decisions-filter.php '{"ip":"172.26.0.2"}' 
 ```
 
-### Enroll a watcher
-
-#### Command usage
-
-```php
-php tests/scripts/watcher/enroll.php <SCENARIOS_JSON> <NAME> <OVERWRITE> <ENROLL_KEY> <TAGS_JSON>
-```
-
-
-#### Example
-
-```bash
-php tests/scripts/watcher/enroll.php  '["crowdsecurity/http-backdoors-attempts", "crowdsecurity/http-bad-user-agent"]' TESTWATCHER 0 YourEnrollKey '["tag1", "tag2"]'
-```

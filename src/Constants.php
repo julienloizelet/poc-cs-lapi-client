@@ -16,6 +16,14 @@ namespace CrowdSec\LapiClient;
  */
 class Constants
 {
+    /** @var int The default timeout (in seconds) when calling LAPI */
+    public const API_TIMEOUT = 5;
+    /** @var string The API-KEY auth type */
+    public const AUTH_KEY = 'api_key';
+    /** @var string The TLS auth type */
+    public const AUTH_TLS = 'tls';
+    /** @var string The Default URL of the CrowdSec LAPI */
+    public const DEFAULT_LAPI_URL = 'http://localhost:8080';
     /** @var string The CrowdSec country scope for decisions */
     public const SCOPE_COUNTRY = 'Country';
     /** @var string The CrowdSec Ip scope for decisions */
@@ -30,12 +38,4 @@ class Constants
      * @var string The current version of this library
      */
     public const VERSION = 'v0.0.1';
-    /** @var int The timeout when calling LAPI */
-    public const API_TIMEOUT = 1;
-    /** @var string The API-KEY auth type */
-    public const AUTH_KEY = 'api_key';
-    /** @var string The TLS auth type */
-    public const AUTH_TLS = 'tls';
-    /** @var string The Default URL of the CrowdSec LAPI */
-    public const DEFAULT_LAPI_URL = 'http://localhost:8080';
 }

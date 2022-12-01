@@ -61,6 +61,7 @@ class Configuration implements ConfigurationInterface
     private function addConnectionNodes($rootNode)
     {
         $rootNode->children()
+            ->scalarNode('api_url')->defaultValue(Constants::DEFAULT_LAPI_URL)->end()
             ->enumNode('auth_type')
                 ->values(
                     [
@@ -71,7 +72,6 @@ class Configuration implements ConfigurationInterface
                 ->defaultValue(Constants::AUTH_KEY)
             ->end()
             ->scalarNode('api_key')->end()
-            ->scalarNode('api_url')->defaultValue(Constants::DEFAULT_LAPI_URL)->end()
             ->scalarNode('tls_cert_path')
                 ->info('Absolute path to the Bouncer certificate')->defaultValue('')
             ->end()
@@ -82,7 +82,7 @@ class Configuration implements ConfigurationInterface
                 ->info('Absolute path to the CA used to process TLS handshake')->defaultValue('')
             ->end()
             ->booleanNode('tls_verify_peer')->defaultValue(false)->end()
-            ->integerNode('api_timeout')->min(Constants::API_TIMEOUT)->defaultValue(Constants::API_TIMEOUT)->end()
+            ->integerNode('api_timeout')->min(1)->defaultValue(Constants::API_TIMEOUT)->end()
         ->end();
     }
 

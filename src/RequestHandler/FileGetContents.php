@@ -19,7 +19,7 @@ use CrowdSec\LapiClient\HttpMessage\Response;
  * @copyright Copyright (c) 2022+ CrowdSec
  * @license   MIT License
  */
-class FileGetContents implements RequestHandlerInterface
+class FileGetContents extends AbstractRequestHandler implements RequestHandlerInterface
 {
     /**
      * {@inheritdoc}
@@ -107,25 +107,27 @@ class FileGetContents implements RequestHandlerInterface
         }
         $header = $this->convertHeadersToString($headers);
         $method = $request->getMethod();
-        $configs = $request->getConfigs();
+        $timeout = $this->getConfig('api_timeout') ?? Constants::API_TIMEOUT;
         $config = [
             'http' => [
                 'method' => $method,
                 'header' => $header,
                 'ignore_errors' => true,
+                'timeout' => $timeout
             ],
         ];
 
         $config['ssl'] = ['verify_peer' => false];
-        if (isset($configs['auth_type']) && Constants::AUTH_TLS === $configs['auth_type']) {
-            $verifyPeer = $configs['tls_verify_peer'] ?? true;
+        $authType = $this->getConfig('auth_type');
+        if ($authType && Constants::AUTH_TLS === $authType) {
+            $verifyPeer = $this->getConfig('tls_verify_peer') ?? true;
             $config['ssl'] = [
                 'verify_peer' => $verifyPeer,
-                'local_cert' => $configs['tls_cert_path'] ?? '',
-                'local_pk' => $configs['tls_key_path'] ?? '',
+                'local_cert' => $this->getConfig('tls_cert_path') ?? '',
+                'local_pk' => $this->getConfig('tls_key_path') ?? '',
             ];
             if ($verifyPeer) {
-                $config['ssl']['cafile'] = $configs['tls_ca_cert_path'] ?? '';
+                $config['ssl']['cafile'] = $this->getConfig('tls_ca_cert_path') ?? '';
             }
         }
 

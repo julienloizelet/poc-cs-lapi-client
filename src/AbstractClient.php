@@ -94,7 +94,12 @@ abstract class AbstractClient
      *
      * @throws ClientException
      */
-    public function request(string $method, string $endpoint, array $parameters = [], array $headers = []): array
+    protected function request(
+        string $method,
+        string $endpoint,
+        array $parameters = [],
+        array $headers = [],
+    ): array
     {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
@@ -102,7 +107,7 @@ abstract class AbstractClient
         }
 
         $response = $this->sendRequest(
-            new Request($this->getFullUrl($endpoint), $method, $headers, $parameters, $this->configs)
+            new Request($this->getFullUrl($endpoint), $method, $headers, $parameters)
         );
 
         return $this->formatResponseBody($response);
@@ -111,7 +116,7 @@ abstract class AbstractClient
     /**
      * @codeCoverageIgnore
      */
-    public function sendRequest(Request $request): Response
+    private function sendRequest(Request $request): Response
     {
         return $this->requestHandler->handle($request);
     }

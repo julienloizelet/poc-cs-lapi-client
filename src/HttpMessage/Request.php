@@ -24,10 +24,6 @@ class Request extends AbstractMessage
         'Content-Type' => 'application/json',
     ];
     /**
-     * @var array
-     */
-    private $configs;
-    /**
      * @var string
      */
     private $method;
@@ -44,19 +40,12 @@ class Request extends AbstractMessage
         string $uri,
         string $method,
         array $headers = [],
-        array $parameters = [],
-        array $configs = []
+        array $parameters = []
     ) {
         $this->uri = $uri;
         $this->method = $method;
         $this->headers = array_merge($this->headers, $headers);
         $this->parameters = $parameters;
-        $this->configs = $configs;
-    }
-
-    public function getConfigs(): array
-    {
-        return $this->configs;
     }
 
     public function getMethod(): string
