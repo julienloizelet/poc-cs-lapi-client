@@ -15,41 +15,27 @@ namespace CrowdSec\LapiClient\Tests\Unit;
  * @license   MIT License
  */
 
+use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractClient extends TestCase
 {
     protected $configs = [
-        'machine_id_prefix' => TestConstants::MACHINE_ID_PREFIX,
         'user_agent_suffix' => TestConstants::USER_AGENT_SUFFIX,
-        'scenarios' => TestConstants::SCENARIOS,
+        'auth_type' => Constants::AUTH_KEY,
+        'api_key' => TestConstants::API_KEY,
+        'api_timeout' => TestConstants::API_TIMEOUT
     ];
 
-    protected function getCurlMock()
+    protected function getCurlMock(array $methods = [])
     {
+        $methods = array_merge(['exec', 'getResponseHttpCode'], $methods);
         return $this->getMockBuilder('CrowdSec\LapiClient\RequestHandler\Curl')
-            ->onlyMethods(['exec', 'getResponseHttpCode'])
+            ->onlyMethods($methods)
             ->getMock();
     }
 
-    protected function getFileStorageMock()
-    {
-        return $this->getMockBuilder('CrowdSec\LapiClient\Storage\FileStorage')
-            ->onlyMethods(
-                [
-                    'retrieveToken',
-                    'retrievePassword',
-                    'retrieveMachineId',
-                    'retrieveScenarios',
-                    'storePassword',
-                    'storeMachineId',
-                    'storeScenarios',
-                    'storeToken',
-                ]
-            )
-            ->getMock();
-    }
 
     protected function getFGCMock()
     {

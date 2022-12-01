@@ -22,45 +22,17 @@ class MockedData
     public const HTTP_403 = 403;
     public const HTTP_500 = 500;
 
-    public const LOGIN_SUCCESS = <<<EOT
-{"code": 200, "token": "this-is-a-token", "expire": "YYYY-MM-ddThh:mm:ssZ"}
+
+    public const DECISIONS_STREAM_LIST = <<<EOT
+{"new": [], "deleted": []}
 EOT;
 
-    public const LOGIN_BAD_CREDENTIALS = <<<EOT
-{
-  "message": "The machine_id or password is incorrect"
-}
-EOT;
-
-    public const REGISTER_ALREADY = <<<EOT
-{
-  "message": "User already registered."
-}
-EOT;
-
-    public const SUCCESS = <<<EOT
-{"message":"OK"}
-EOT;
-
-    public const BAD_REQUEST = <<<EOT
-{
-  "message": "Invalid request body",
-  "errors": "[Unknown error parsing request body]"
-}
-EOT;
-
-    public const SIGNALS_BAD_REQUEST = <<<EOT
-{
-  "message": "Invalid request body",
-  "errors": "[object has missing required properties ([\"scenario_hash\"])]"
-}
+    public const DECISIONS_FILTER = <<<EOT
+[{"duration":"3h59m56.205431304s","id":1,"origin":"cscli","scenario":"manual 'ban' from ''","scope":"Ip","type":"ban","value":"172.26.0.2"}]
 EOT;
 
     public const UNAUTHORIZED = <<<EOT
 {"message":"Unauthorized"}
 EOT;
 
-    public const DECISIONS_STREAM_LIST = <<<EOT
-{"new": [], "deleted": []}
-EOT;
 }

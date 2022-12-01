@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\LapiClient\Tests\Unit;
 
 /**
- * Test for watcher.
+ * Test for client.
  *
  * @author    CrowdSec team
  *
@@ -19,7 +19,6 @@ use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\HttpMessage\Response;
-use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\MockedData;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
 
@@ -27,7 +26,6 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
  * @uses \CrowdSec\LapiClient\HttpMessage\Response
  * @uses \CrowdSec\LapiClient\Configuration::getConfigTreeBuilder
  * @uses \CrowdSec\LapiClient\Bouncer::formatUserAgent
- * @uses \CrowdSec\LapiClient\Storage\FileStorage::__construct
  *
  * @covers \CrowdSec\LapiClient\AbstractClient::__construct
  * @covers \CrowdSec\LapiClient\AbstractClient::getConfig
@@ -42,11 +40,11 @@ final class AbstractClientTest extends AbstractClient
 {
     public function testClientInit()
     {
-        $client = new Bouncer($this->configs, new FileStorage());
+        $client = new Bouncer($this->configs);
 
         $url = $client->getUrl();
         $this->assertEquals(
-            Constants::URL_DEV,
+            Constants::DEFAULT_LAPI_URL .'/',
             $url,
             'Url should be dev by default'
         );
@@ -63,12 +61,12 @@ final class AbstractClientTest extends AbstractClient
             'Request handler must be curl by default'
         );
 
-        $client = new Bouncer(array_merge($this->configs, ['env' => Constants::ENV_PROD]), new FileStorage());
+        $client = new Bouncer(array_merge($this->configs, ['api_url' => 'http://test']));
         $url = $client->getUrl();
         $this->assertEquals(
-            Constants::URL_PROD,
+            'http://test/',
             $url,
-            'Url should be prod if specified'
+            'Url should be ok if specified'
         );
         $this->assertEquals(
             '/',
@@ -78,7 +76,7 @@ final class AbstractClientTest extends AbstractClient
 
         $error = false;
         try {
-            new Bouncer($this->configs, new FileStorage(), new \DateTime());
+            new Bouncer($this->configs, new \DateTime());
         } catch (\TypeError $e) {
             $error = $e->getMessage();
         }
@@ -93,7 +91,7 @@ final class AbstractClientTest extends AbstractClient
 
     public function testPrivateOrProtectedMethods()
     {
-        $client = new Bouncer($this->configs, new FileStorage());
+        $client = new Bouncer($this->configs);
 
         $fullUrl = PHPUnitUtil::callMethod(
             $client,
@@ -101,7 +99,7 @@ final class AbstractClientTest extends AbstractClient
             ['/test-endpoint']
         );
         $this->assertEquals(
-            Constants::URL_DEV . 'test-endpoint',
+            Constants::DEFAULT_LAPI_URL. '/test-endpoint',
             $fullUrl,
             'Full Url should be ok'
         );
@@ -143,7 +141,7 @@ final class AbstractClientTest extends AbstractClient
             'Bad JSON should be detected'
         );
 
-        $response = new Response(MockedData::REGISTER_ALREADY, 200);
+        $response = new Response(MockedData::DECISIONS_FILTER, 200);
 
         $decodedResponse = PHPUnitUtil::callMethod(
             $client,
@@ -152,7 +150,7 @@ final class AbstractClientTest extends AbstractClient
         );
 
         $this->assertEquals(
-            ['message' => 'User already registered.'],
+            json_decode(MockedData::DECISIONS_FILTER, true),
             $decodedResponse,
             'Decoded response should be correct'
         );
@@ -198,7 +196,7 @@ final class AbstractClientTest extends AbstractClient
         );
 
         $this->assertEquals(
-            ['message' => ''],
+            [],
             $decoded,
             'An empty response body should not return some array'
         );

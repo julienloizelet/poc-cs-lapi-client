@@ -17,7 +17,7 @@ echo \PHP_EOL . 'Instantiate bouncer ...' . \PHP_EOL;
 $apiKeyConfigs = [
     'auth_type' => 'api_key',
     'api_url' => 'https://crowdsec:8080',
-    'api_key' => '6a20918e3cb13f622160688b1848397d',
+    'api_key' => 'fc7a41bc16a3d6bb87e1696936a6a28a',
 ];
 // Config to use TLS for connection
 $tlsConfigs = [

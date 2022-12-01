@@ -27,7 +27,7 @@ class Bouncer extends AbstractClient
     /**
      * @var string The decisions endpoint
      */
-    public const DECISIONS_ENDPOINT = '/v1/decisions';
+    public const DECISIONS_FILTER_ENDPOINT = '/v1/decisions';
     /**
      * @var array
      */
@@ -75,7 +75,7 @@ class Bouncer extends AbstractClient
     {
         return $this->manageRequest(
             'GET',
-            self::DECISIONS_ENDPOINT,
+            self::DECISIONS_FILTER_ENDPOINT,
             $filter
         );
     }

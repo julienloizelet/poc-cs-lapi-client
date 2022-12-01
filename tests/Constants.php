@@ -17,32 +17,17 @@ namespace CrowdSec\LapiClient\Tests;
 class Constants
 {
     /**
-     * @var string The user agent suffix used to send request to CAPI
+     * @var string The user agent suffix used to send request to LAPI
      */
-    public const USER_AGENT_SUFFIX = 'PHPCAPITEST';
+    public const USER_AGENT_SUFFIX = 'PHPLAPITEST';
 
     /**
-     * @var string The machine id prefix used to send request to CAPI
+     * @var string The user agent suffix used to send request to LAPI
      */
-    public const MACHINE_ID_PREFIX = 'capiclienttest';
+    public const API_KEY = '1234abcd';
 
     /**
-     * @var array The scenario used to send request to CAPI
+     * @var string The timeout used to request LAPI
      */
-    public const SCENARIOS = ['test-scenario'];
-
-    /**
-     * @var string The password used to send request to CAPI
-     */
-    public const PASSWORD = 'test-password';
-
-    /**
-     * @var string The token used to send request to CAPI
-     */
-    public const TOKEN = 'test-token';
-
-    /**
-     * @var string The machine_id used to send request to CAPI
-     */
-    public const MACHINE_ID = 'test-machine-id';
+    public const API_TIMEOUT = 25;
 }

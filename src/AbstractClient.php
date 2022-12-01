@@ -55,7 +55,7 @@ abstract class AbstractClient
         LoggerInterface $logger = null
     ) {
         $this->configs = $configs;
-        $this->requestHandler = ($requestHandler) ?: new Curl();
+        $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
         $this->url = $this->configs['api_url'];
         if (!$logger) {
             $logger = new Logger('null');
@@ -98,7 +98,7 @@ abstract class AbstractClient
         string $method,
         string $endpoint,
         array $parameters = [],
-        array $headers = [],
+        array $headers = []
     ): array
     {
         $method = strtoupper($method);
