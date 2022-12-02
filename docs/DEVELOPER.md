@@ -136,9 +136,10 @@ ddev php ./my-own-modules/lapi-client/vendor/bin/phpunit  ./my-own-modules/lapi-
 In order to launch integration tests, we have to set some environment variables:
 
 ```bash
-ddev php ./my-own-modules/lapi-client/vendor/bin/phpunit  ./my-own-modules/lapi-client/tests/Integration --testdox     
+ddev exec BOUNCER_KEY=<BOUNCER_KEY> AGENT_TLS_PATH=/var/www/html/cfssl LAPI_URL=https://crowdsec:8080 php ./my-own-modules/lapi-client/vendor/bin/phpunit  ./my-own-modules/lapi-client/tests/Integration --testdox     
 ```
 
+`<BOUNCER_KEY>` should have been created and retrieved before this test by running `ddev create-bouncer`.
 
 #### Coding standards
 

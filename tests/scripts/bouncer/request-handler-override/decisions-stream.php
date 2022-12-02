@@ -8,7 +8,7 @@ use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 
 $startup = isset($argv[1]) ? (bool) $argv[1] : false;
 $filter = isset($argv[2]) ? json_decode($argv[2], true)
-    : ['scopes' => [Constants::SCOPE_IP, Constants::SCOPE_RANGE]];
+    : ['scopes' => Constants::SCOPE_IP .','. Constants::SCOPE_RANGE];
 
 if (is_null($filter)) {
     exit('Param <FILTER_JSON> is not a valid json' . \PHP_EOL

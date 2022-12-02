@@ -35,7 +35,7 @@ abstract class AbstractClient
     /**
      * @var string[]
      */
-    private $allowedMethods = ['POST', 'GET'];
+    private $allowedMethods = ['POST', 'GET', 'DELETE'];
     /**
      * @var LoggerInterface
      */

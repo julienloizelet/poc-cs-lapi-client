@@ -101,7 +101,7 @@ class Bouncer extends AbstractClient
     }
 
     /**
-     * Make a request and manage retry attempts (login and register errors).
+     * Make a request.
      *
      * @throws ClientException
      */

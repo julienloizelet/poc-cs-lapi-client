@@ -7,7 +7,7 @@ use CrowdSec\LapiClient\Constants;
 
 $startup = isset($argv[1]) ? (bool) $argv[1] : false;
 $filter = isset($argv[2]) ? json_decode($argv[2], true)
-    : ['scopes' => [Constants::SCOPE_IP, Constants::SCOPE_RANGE]];
+    : ['scopes' => Constants::SCOPE_IP .','. Constants::SCOPE_RANGE];
 
 if (is_null($filter)) {
     exit('Param <FILTER_JSON> is not a valid json' . \PHP_EOL
@@ -20,7 +20,7 @@ echo \PHP_EOL . 'Instantiate bouncer ...' . \PHP_EOL;
 $apiKeyConfigs = [
     'auth_type' => 'api_key',
     'api_url' => 'https://crowdsec:8080',
-    'api_key' => '6a20918e3cb13f622160688b1848397d',
+    'api_key' => 'dc1a30e1bf433b190564ff740b01cc59',
 ];
 // Config to use TLS for connection
 $tlsConfigs = [

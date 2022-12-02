@@ -137,6 +137,9 @@ class Curl extends AbstractRequestHandler implements RequestHandlerInterface
                 $url .= strpos($url, '?') ? '&' : '?';
                 $url .= http_build_query($parameters);
             }
+        } elseif ('DELETE' === strtoupper($method)) {
+            $options[\CURLOPT_POST] = false;
+            $options[\CURLOPT_CUSTOMREQUEST] = 'DELETE';
         }
 
         $options[\CURLOPT_URL] = $url;

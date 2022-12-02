@@ -42,7 +42,7 @@ jobs:
 
       - name: Install DDEV
         env:
-          DDEV_VERSION: v1.21.2
+          DDEV_VERSION: v1.21.3
         run: |
           # @see https://ddev.readthedocs.io/en/stable/#installationupgrade-script-linux-and-macos-armarm64-and-amd64-architectures
           sudo apt-get -qq update
@@ -64,13 +64,17 @@ jobs:
           cp .ddev/additional_docker_compose/docker-compose.crowdsec.yaml .ddev/docker-compose.crowdsec.yaml
           mkdir ${{ github.workspace }}/cfssl
           cp -r .ddev/custom_files/crowdsec/cfssl/* ${{ github.workspace }}/cfssl
-          ls -l ${{ github.workspace }}/cfssl
           ddev start
 
       - name: Some DEBUG information
         run: |
           ddev --version
           ddev exec php -v
+          ddev exec -s crowdsec crowdsec -version
+
+      - name: Set BOUNCER_KEY and PROXY_IP env
+        run: |
+          echo "BOUNCER_KEY=$(ddev create-bouncer)" >> $GITHUB_ENV
 
       - name: Clone PHP lib Crowdsec files
         uses: actions/checkout@v3
@@ -91,17 +95,15 @@ jobs:
           github.event_name == 'push'
         run:  ddev php ./${{env.EXTENSION_PATH}}/vendor/bin/phpunit --debug ./${{env.EXTENSION_PATH}}/tests/Unit --testdox
 
-      - name: Prepare integration tests
-        if: |
-          github.event.inputs.integration_tests == 'true' ||
-          github.event_name == 'push'
-        run: | 
-          echo -n ${{ secrets.ENROLLMENT_KEY }} > ${{env.EXTENSION_PATH}}/tests/Integration/.enrollment_key.txt
-          echo -n "{\"machine_id\":\"${{ secrets.TEST_MACHINE_ID }}\"}" > ${{env.EXTENSION_PATH}}/src/Storage/dev-machine-id.json
-          echo -n "{\"password\":\"${{ secrets.TEST_MACHINE_PWD }}\"}" > ${{env.EXTENSION_PATH}}/src/Storage/dev-password.json
 
-      - name: Run Integration tests
+      - name: Run Integration tests (without TLS)
         if: |
           github.event.inputs.integration_tests == 'true' ||
           github.event_name == 'push'
-        run: ddev php  ./${{env.EXTENSION_PATH}}/vendor/bin/phpunit  ./${{env.EXTENSION_PATH}}/tests/Integration --testdox
+        run:  ddev exec BOUNCER_KEY=${{ env.BOUNCER_KEY }} AGENT_TLS_PATH=/var/www/html/cfssl LAPI_URL=https://crowdsec:8080 /usr/bin/php ./${{env.EXTENSION_PATH}}/vendor/bin/phpunit --testdox --colors --exclude-group ignore ./${{env.EXTENSION_PATH}}/tests/Integration
+
+      - name: Run Integration tests (with TLS)
+        if: |
+          github.event.inputs.integration_tests == 'true' ||
+          github.event_name == 'push'
+        run: ddev exec BOUNCER_KEY=${{ env.BOUNCER_KEY }} AGENT_TLS_PATH=/var/www/html/cfssl BOUNCER_TLS_PATH=/var/www/html/cfssl LAPI_URL=https://crowdsec:8080 /usr/bin/php ./${{env.EXTENSION_PATH}}/vendor/bin/phpunit --testdox --colors --exclude-group ignore ./${{env.EXTENSION_PATH}}/tests/Integration

@@ -30,4 +30,8 @@ class Constants
      * @var string The timeout used to request LAPI
      */
     public const API_TIMEOUT = 25;
+
+    public const BAD_IP = '1.2.3.4';
+    public const IP_RANGE = '24';
+    public const JAPAN = 'JP';
 }
