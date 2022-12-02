@@ -255,7 +255,7 @@ final class CurlTest extends AbstractClient
             \CURLOPT_SSL_VERIFYPEER => true,
             \CURLOPT_SSLCERT => 'tls_cert_path_test',
             \CURLOPT_SSLKEY => 'tls_key_path_test',
-            \CURLOPT_CAINFO => 'tls_ca_cert_path_test'
+            \CURLOPT_CAINFO => 'tls_ca_cert_path_test',
         ];
 
         $this->assertEquals(
@@ -288,7 +288,7 @@ final class CurlTest extends AbstractClient
             \CURLOPT_SSL_VERIFYPEER => true,
             \CURLOPT_SSLCERT => 'tls_cert_path_test',
             \CURLOPT_SSLKEY => 'tls_key_path_test',
-            \CURLOPT_CAINFO => 'tls_ca_cert_path_test'
+            \CURLOPT_CAINFO => 'tls_ca_cert_path_test',
         ];
 
         $this->assertEquals(
@@ -296,8 +296,5 @@ final class CurlTest extends AbstractClient
             $curlOptions,
             'Curl options must be as expected for DELETE'
         );
-
-
-
     }
 }

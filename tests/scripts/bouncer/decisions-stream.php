@@ -8,10 +8,17 @@ use CrowdSec\LapiClient\Constants;
 $startup = isset($argv[1]) ? (bool) $argv[1] : false;
 $filter = isset($argv[2]) ? json_decode($argv[2], true)
     : ['scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE];
+$bouncerKey = $argv[3] ?? false;
+$lapiUrl = $argv[4] ?? false;
+if (!$bouncerKey || !$lapiUrl) {
+    exit('Params <BOUNCER_KEY> and <LAPI_URL> are required' . \PHP_EOL
+         . 'Usage: php decisions-stream.php <STARTUP> <FILTER_JSON> <BOUNCER_KEY> <LAPI_URL>'
+         . \PHP_EOL);
+}
 
 if (is_null($filter)) {
     exit('Param <FILTER_JSON> is not a valid json' . \PHP_EOL
-         . 'Usage: php decisions-stream.php <STARTUP> <FILTER_JSON>'
+         . 'Usage: php decisions-stream.php <STARTUP> <FILTER_JSON> <BOUNCER_KEY> <LAPI_URL>'
          . \PHP_EOL);
 }
 
@@ -19,19 +26,9 @@ echo \PHP_EOL . 'Instantiate bouncer ...' . \PHP_EOL;
 // Config to use an Api Key for connection
 $apiKeyConfigs = [
     'auth_type' => 'api_key',
-    'api_url' => 'https://crowdsec:8080',
-    'api_key' => 'dc1a30e1bf433b190564ff740b01cc59',
+    'api_url' => $lapiUrl,
+    'api_key' => $bouncerKey,
 ];
-// Config to use TLS for connection
-$tlsConfigs = [
-    'auth_type' => 'tls',
-    'api_url' => 'https://crowdsec:8080',
-    'user_agent_suffix' => 'LapiClientTest',
-    'tls_cert_path' => '/var/www/html/cfssl/bouncer.pem',
-    'tls_key_path' => '/var/www/html/cfssl/bouncer-key.pem',
-    'tls_verify_peer' => true,
-    'tls_ca_cert_path' => '/var/www/html/cfssl/ca-chain.pem',
-    ];
 $client = new Bouncer($apiKeyConfigs);
 echo 'Bouncer instantiated' . \PHP_EOL;
 

@@ -303,7 +303,7 @@ handler. To use it, you should instantiate it and pass the created object as a p
 use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\RequestHandler\FileGetContents;
 
-$requestHandler = new FileGetContents();
+$requestHandler = new FileGetContents($configs);
 
 $client = new Bouncer($configs, $requestHandler);
 ```
@@ -311,7 +311,7 @@ $client = new Bouncer($configs, $requestHandler);
 ## Example scripts
 
 
-You will find some ready-to-use php scripts in the `tests/scripts` folder. These scripts could be usefully to better 
+You will find some ready-to-use php scripts in the `tests/scripts` folder. These scripts could be useful to better 
 understand what you can do with this client. 
 
 As Bouncer methods need at least an array as parameter, we use a json format in command line.
@@ -322,19 +322,19 @@ As Bouncer methods need at least an array as parameter, we use a json format in 
 #### Command usage
 
 ```php
-php tests/scripts/bouncer/decisions-stream.php <STARTUP> <FILTER_JSON>
+php tests/scripts/bouncer/decisions-stream.php <STARTUP> <FILTER_JSON> <BOUNCER_KEY> <LAPI_URL>
 ```
 
 #### Example usage
 
 ```bash
-php tests/scripts/bouncer/decisions-stream.php 1 '{"scopes":"Ip"}'
+php tests/scripts/bouncer/decisions-stream.php 1 '{"scopes":"Ip"}' 92d3de1dde6d354b771d63035cf5ef83 https://crowdsec:8080 
 ```
 
 Or, with the `file_get_contents` handler:
 
 ```bash
-php tests/scripts/bouncer/request-handler-override/decisions-stream.php 1 '{"scopes":"Ip"}'
+php tests/scripts/bouncer/request-handler-override/decisions-stream.php 1 '{"scopes":"Ip"}' 92d3de1dde6d354b771d63035cf5ef83 https://crowdsec:8080
 ```
 
 ### Get filtered decisions
@@ -348,6 +348,12 @@ php tests/scripts/bouncer/decisions-filter.php <FILTER_JSON>
 #### Example
 
 ```bash
-php tests/scripts/bouncer/decisions-filter.php '{"ip":"172.26.0.2"}' 
+php tests/scripts/bouncer/decisions-filter.php '{"scope":"ip"}' 92d3de1dde6d354b771d63035cf5ef83 https://crowdsec:8080 
+```
+
+Or, with the `file_get_contents` handler:
+
+```bash
+php tests/scripts/bouncer/request-handler-override/decisions-filter.php '{"scopes":"Ip"}' 92d3de1dde6d354b771d63035cf5ef83 https://crowdsec:8080
 ```
 

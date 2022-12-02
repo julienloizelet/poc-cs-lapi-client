@@ -94,7 +94,7 @@ class WatcherClient extends AbstractClient
     {
         if (!$this->token) {
             $data = [
-               'scenarios' => ['crowdsecurity/http-sensitive-files'],
+               'scenarios' => [],
             ];
             $credentials = $this->manageRequest(
                 'POST',

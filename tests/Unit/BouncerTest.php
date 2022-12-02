@@ -42,7 +42,6 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
  * @covers \CrowdSec\LapiClient\Configuration::getConfigTreeBuilder
  * @covers \CrowdSec\LapiClient\Configuration::addConnectionNodes
  * @covers \CrowdSec\LapiClient\Configuration::validate
- *
  */
 final class BouncerTest extends AbstractClient
 {

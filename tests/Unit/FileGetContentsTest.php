@@ -158,7 +158,7 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
                 'verify_peer' => true,
                 'local_cert' => 'tls_cert_path_test',
                 'local_pk' => 'tls_key_path_test',
-                'cafile' => 'tls_ca_cert_path_test'
+                'cafile' => 'tls_ca_cert_path_test',
             ],
         ];
 

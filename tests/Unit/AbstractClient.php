@@ -35,7 +35,7 @@ abstract class AbstractClient extends TestCase
         'tls_cert_path' => 'tls_cert_path_test',
         'tls_key_path' => 'tls_key_path_test',
         'tls_verify_peer' => true,
-        'tls_ca_cert_path' => 'tls_ca_cert_path_test'
+        'tls_ca_cert_path' => 'tls_ca_cert_path_test',
     ];
 
     protected function getCurlMock(array $methods = [])
