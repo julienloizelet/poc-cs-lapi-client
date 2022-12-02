@@ -17,11 +17,8 @@ use CrowdSec\LapiClient\AbstractClient;
 use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\RequestHandler\FileGetContents;
-use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
-use CrowdSec\LapiClient\Tests\PHPUnitUtil;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Util\Exception;
 
 /**
  * @coversNothing
@@ -33,7 +30,6 @@ final class BouncerTest extends TestCase
      */
     protected $configs;
 
-
     private function addTlsConfig(&$bouncerConfigs, $tlsPath)
     {
         $bouncerConfigs['tls_cert_path'] = $tlsPath . '/bouncer.pem';
@@ -44,7 +40,7 @@ final class BouncerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->useTls = (string)getenv('BOUNCER_TLS_PATH');
+        $this->useTls = (string) getenv('BOUNCER_TLS_PATH');
 
         $bouncerConfigs = [
             'auth_type' => $this->useTls ? Constants::AUTH_TLS : Constants::AUTH_KEY,
@@ -75,11 +71,9 @@ final class BouncerTest extends TestCase
      */
     public function testDecisionsStream($requestHandler)
     {
-
-        if( $requestHandler ===  'FileGetContents'){
+        if ('FileGetContents' === $requestHandler) {
             $client = new Bouncer($this->configs, new FileGetContents($this->configs));
-        }
-        else{
+        } else {
             // Curl by default
             $client = new Bouncer($this->configs);
         }
@@ -108,7 +102,7 @@ final class BouncerTest extends TestCase
         $response = $client->getStreamDecisions(
             true,
             [
-                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE .','. Constants::SCOPE_COUNTRY
+                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE . ',' . Constants::SCOPE_COUNTRY,
             ]
         );
         $this->assertCount(3, $response['new'], 'Should be 3 active decisions for all scopes');
@@ -116,7 +110,7 @@ final class BouncerTest extends TestCase
         $response = $client->getStreamDecisions(
             false,
             [
-                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE .','. Constants::SCOPE_COUNTRY
+                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE . ',' . Constants::SCOPE_COUNTRY,
             ]
         );
         $this->assertNull($response['new'], 'Should be no new if startup has been done');
@@ -125,24 +119,21 @@ final class BouncerTest extends TestCase
         $response = $client->getStreamDecisions(
             false,
             [
-                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE .','. Constants::SCOPE_COUNTRY
+                'scopes' => Constants::SCOPE_IP . ',' . Constants::SCOPE_RANGE . ',' . Constants::SCOPE_COUNTRY,
             ]
         );
         $this->assertNull($response['new'], 'Should be no new decision yet');
         $this->assertNotNull($response['deleted'], 'Should be deleted decisions now');
     }
 
-
     /**
      * @dataProvider requestHandlerProvider
      */
     public function testFilteredDecisions($requestHandler)
     {
-
-        if( $requestHandler ===  'FileGetContents'){
+        if ('FileGetContents' === $requestHandler) {
             $client = new Bouncer($this->configs, new FileGetContents($this->configs));
-        }
-        else{
+        } else {
             // Curl by default
             $client = new Bouncer($this->configs);
         }
@@ -158,13 +149,13 @@ final class BouncerTest extends TestCase
         // Add decisions
         $now = new \DateTime();
         $this->watcherClient->addDecision($now, '12h', '+12 hours', TestConstants::BAD_IP, 'captcha');
-        $this->watcherClient->addDecision($now, '24h', '+24 hours', '1.2.3.0' . '/' . TestConstants::IP_RANGE, 'ban');
+        $this->watcherClient->addDecision($now, '24h', '+24 hours', '1.2.3.0/' . TestConstants::IP_RANGE, 'ban');
         $this->watcherClient->addDecision($now, '24h', '+24 hours', TestConstants::JAPAN, 'captcha', Constants::SCOPE_COUNTRY);
         $response = $client->getFilteredDecisions(['ip' => TestConstants::BAD_IP]);
         $this->assertCount(2, $response, '2 decisions for specified IP');
         $response = $client->getFilteredDecisions(['scope' => Constants::SCOPE_COUNTRY, 'value' => TestConstants::JAPAN]);
         $this->assertCount(1, $response, '1 decision for specified country');
-        $response = $client->getFilteredDecisions(['range' => '1.2.3.0' . '/' . TestConstants::IP_RANGE]);
+        $response = $client->getFilteredDecisions(['range' => '1.2.3.0/' . TestConstants::IP_RANGE]);
         $this->assertCount(1, $response, '1 decision for specified range');
         $response = $client->getFilteredDecisions(['ip' => '2.3.4.5']);
         $this->assertCount(0, $response, '0 decision for specified IP');
@@ -175,6 +166,7 @@ final class BouncerTest extends TestCase
         $response = $client->getFilteredDecisions(['ip' => TestConstants::BAD_IP]);
         $this->assertCount(0, $response, '0 decision after delete for specified IP');
     }
+
     /**
      * @return void
      */

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CrowdSec\LapiClient;
 
-use InvalidArgumentException;
-use RuntimeException;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -56,7 +54,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return void
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     private function addConnectionNodes($rootNode)
     {
@@ -93,8 +91,8 @@ class Configuration implements ConfigurationInterface
      *
      * @return void
      *
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
+     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     private function validate($rootNode)
     {

@@ -141,6 +141,12 @@ ddev exec BOUNCER_KEY=<BOUNCER_KEY> AGENT_TLS_PATH=/var/www/html/cfssl LAPI_URL=
 
 `<BOUNCER_KEY>` should have been created and retrieved before this test by running `ddev create-bouncer`.
 
+If you need to test with a TLS authentication, you should launch:
+
+```bash
+ddev exec BOUNCER_TLS_PATH=/var/www/html/cfssl AGENT_TLS_PATH=/var/www/html/cfssl LAPI_URL=https://crowdsec:8080 php ./my-own-modules/lapi-client/vendor/bin/phpunit  ./my-own-modules/lapi-client/tests/Integration --testdox     
+```
+
 #### Coding standards
 
 We set up some coding standards tools that you will find in the `tools/coding-standards` folder.

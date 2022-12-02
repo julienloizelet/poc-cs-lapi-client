@@ -95,6 +95,31 @@ class Curl extends AbstractRequestHandler implements RequestHandlerInterface
         return $result;
     }
 
+    private function handleMethod(string $method, string $url, array $parameters = []): array
+    {
+        $result = [];
+        if ('POST' === strtoupper($method)) {
+            $result[\CURLOPT_POST] = true;
+            $result[\CURLOPT_CUSTOMREQUEST] = 'POST';
+            $result[\CURLOPT_POSTFIELDS] = json_encode($parameters);
+        } elseif ('GET' === strtoupper($method)) {
+            $result[\CURLOPT_POST] = false;
+            $result[\CURLOPT_CUSTOMREQUEST] = 'GET';
+            $result[\CURLOPT_HTTPGET] = true;
+
+            if (!empty($parameters)) {
+                $url .= strpos($url, '?') ? '&' : '?';
+                $url .= http_build_query($parameters);
+            }
+        } elseif ('DELETE' === strtoupper($method)) {
+            $result[\CURLOPT_POST] = false;
+            $result[\CURLOPT_CUSTOMREQUEST] = 'DELETE';
+        }
+        $result[\CURLOPT_URL] = $url;
+
+        return $result;
+    }
+
     /**
      * Retrieve Curl options.
      *
@@ -121,28 +146,9 @@ class Curl extends AbstractRequestHandler implements RequestHandlerInterface
                 $options[\CURLOPT_HTTPHEADER][] = sprintf('%s:%s', $key, $value);
             }
         }
-        // We need to keep keys indexes
+        // We need to keep keys indexes (array_merge not keeping indexes)
         $options += $this->handleConfigs();
-
-        if ('POST' === strtoupper($method)) {
-            $options[\CURLOPT_POST] = true;
-            $options[\CURLOPT_CUSTOMREQUEST] = 'POST';
-            $options[\CURLOPT_POSTFIELDS] = json_encode($parameters);
-        } elseif ('GET' === strtoupper($method)) {
-            $options[\CURLOPT_POST] = false;
-            $options[\CURLOPT_CUSTOMREQUEST] = 'GET';
-            $options[\CURLOPT_HTTPGET] = true;
-
-            if (!empty($parameters)) {
-                $url .= strpos($url, '?') ? '&' : '?';
-                $url .= http_build_query($parameters);
-            }
-        } elseif ('DELETE' === strtoupper($method)) {
-            $options[\CURLOPT_POST] = false;
-            $options[\CURLOPT_CUSTOMREQUEST] = 'DELETE';
-        }
-
-        $options[\CURLOPT_URL] = $url;
+        $options += $this->handleMethod($method, $url, $parameters);
 
         return $options;
     }

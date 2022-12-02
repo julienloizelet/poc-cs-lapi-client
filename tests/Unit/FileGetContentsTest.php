@@ -90,11 +90,11 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
 ',
                 'ignore_errors' => true,
                 'content' => '{"machine_id":"test","password":"test"}',
-                'timeout' => Constants::API_TIMEOUT
+                'timeout' => Constants::API_TIMEOUT,
             ],
             'ssl' => [
-                'verify_peer' => false
-            ]
+                'verify_peer' => false,
+            ],
         ];
 
         $this->assertEquals(
@@ -124,11 +124,11 @@ Content-Type: application/json
 User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
 ',
                 'ignore_errors' => true,
-                'timeout' => Constants::API_TIMEOUT
+                'timeout' => Constants::API_TIMEOUT,
             ],
             'ssl' => [
-                'verify_peer' => false
-            ]
+                'verify_peer' => false,
+            ],
         ];
 
         $this->assertEquals(
@@ -183,7 +183,6 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
             'Success get decisions stream'
         );
     }
-
 
     public function testHandleError()
     {
@@ -246,5 +245,4 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
             );
         $mockFGCRequest->handle($request);
     }
-
 }

@@ -25,17 +25,17 @@ abstract class AbstractClient extends TestCase
         'user_agent_suffix' => TestConstants::USER_AGENT_SUFFIX,
         'auth_type' => Constants::AUTH_KEY,
         'api_key' => TestConstants::API_KEY,
-        'api_timeout' => TestConstants::API_TIMEOUT
+        'api_timeout' => TestConstants::API_TIMEOUT,
     ];
 
     protected function getCurlMock(array $methods = [])
     {
         $methods = array_merge(['exec', 'getResponseHttpCode'], $methods);
+
         return $this->getMockBuilder('CrowdSec\LapiClient\RequestHandler\Curl')
             ->onlyMethods($methods)
             ->getMock();
     }
-
 
     protected function getFGCMock()
     {

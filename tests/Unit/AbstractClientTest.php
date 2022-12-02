@@ -44,7 +44,7 @@ final class AbstractClientTest extends AbstractClient
 
         $url = $client->getUrl();
         $this->assertEquals(
-            Constants::DEFAULT_LAPI_URL .'/',
+            Constants::DEFAULT_LAPI_URL . '/',
             $url,
             'Url should be dev by default'
         );
@@ -99,7 +99,7 @@ final class AbstractClientTest extends AbstractClient
             ['/test-endpoint']
         );
         $this->assertEquals(
-            Constants::DEFAULT_LAPI_URL. '/test-endpoint',
+            Constants::DEFAULT_LAPI_URL . '/test-endpoint',
             $fullUrl,
             'Full Url should be ok'
         );

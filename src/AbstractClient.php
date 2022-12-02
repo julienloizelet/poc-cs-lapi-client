@@ -99,8 +99,7 @@ abstract class AbstractClient
         string $endpoint,
         array $parameters = [],
         array $headers = []
-    ): array
-    {
+    ): array {
         $method = strtoupper($method);
         if (!in_array($method, $this->allowedMethods)) {
             throw new ClientException("Method ($method) is not allowed.");

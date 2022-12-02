@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CrowdSec\LapiClient\RequestHandler;
 
-
 /**
  * Request handler abstraction.
  *

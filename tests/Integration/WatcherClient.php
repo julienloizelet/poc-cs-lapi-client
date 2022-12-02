@@ -8,13 +8,9 @@ use CrowdSec\LapiClient\AbstractClient;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\HttpMessage\Request;
-use CrowdSec\LapiClient\RequestHandler\FileGetContents;
-use CrowdSec\LapiClient\RequestHandler\Curl;
-use CrowdSec\LapiClient\RequestHandler\RequestHandlerInterface;
 
 class WatcherClient extends AbstractClient
 {
-
     public const WATCHER_LOGIN_ENDPOINT = '/v1/watchers/login';
 
     public const WATCHER_DECISIONS_ENDPOINT = '/v1/decisions';
@@ -26,11 +22,10 @@ class WatcherClient extends AbstractClient
     /** @var string */
     private $token;
 
-
     public function __construct(array $configs)
     {
         $this->configs = $configs;
-        $this->headers = ['User-Agent' => 'LAPI_WATCHER_TEST/'. Constants::VERSION];
+        $this->headers = ['User-Agent' => 'LAPI_WATCHER_TEST/' . Constants::VERSION];
         $agentTlsPath = getenv('AGENT_TLS_PATH');
         if (!$agentTlsPath) {
             throw new \Exception('Using TLS auth for agent is required. Please set AGENT_TLS_PATH env.');
@@ -99,7 +94,7 @@ class WatcherClient extends AbstractClient
     {
         if (!$this->token) {
             $data = [
-               'scenarios' => ['crowdsecurity/http-sensitive-files']
+               'scenarios' => ['crowdsecurity/http-sensitive-files'],
             ];
             $credentials = $this->manageRequest(
                 'POST',

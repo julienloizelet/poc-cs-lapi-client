@@ -19,11 +19,9 @@ use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\HttpMessage\Response;
-use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
 use CrowdSec\LapiClient\Tests\MockedData;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * @uses \CrowdSec\LapiClient\AbstractClient
@@ -60,8 +58,6 @@ use org\bovigo\vfs\vfsStream;
  */
 final class BouncerTest extends AbstractClient
 {
-
-
     public function testDecisionsStreamParams()
     {
         $mockClient = $this->getMockBuilder('CrowdSec\LapiClient\Bouncer')
@@ -110,13 +106,11 @@ final class BouncerTest extends AbstractClient
         $mockClient->getFilteredDecisions(['ip' => '1.2.3.4']);
     }
 
-
     public function testRequest()
     {
         // Test a valid POST request and its return
 
         $mockCurl = $this->getCurlMock(['handle']);
-
 
         $mockClient = $this->getMockBuilder('CrowdSec\LapiClient\Bouncer')
             ->enableOriginalConstructor()
@@ -258,7 +252,7 @@ final class BouncerTest extends AbstractClient
 
         $error = '';
         try {
-            new Bouncer(['auth_type' => Constants::AUTH_TLS, 'tls_cert_path' => 'test', 'tls_key_path' => 'test', 'tls_verify_peer'=> true]);
+            new Bouncer(['auth_type' => Constants::AUTH_TLS, 'tls_cert_path' => 'test', 'tls_key_path' => 'test', 'tls_verify_peer' => true]);
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }

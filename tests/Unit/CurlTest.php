@@ -19,7 +19,6 @@ use CrowdSec\LapiClient\Bouncer;
 use CrowdSec\LapiClient\ClientException;
 use CrowdSec\LapiClient\Constants;
 use CrowdSec\LapiClient\HttpMessage\Request;
-use CrowdSec\LapiClient\Storage\FileStorage;
 use CrowdSec\LapiClient\Tests\Constants as TestConstants;
 use CrowdSec\LapiClient\Tests\MockedData;
 use CrowdSec\LapiClient\Tests\PHPUnitUtil;
@@ -159,7 +158,6 @@ final class CurlTest extends AbstractClient
         );
     }
 
-
     public function testOptions()
     {
         $url = Constants::DEFAULT_LAPI_URL . '/watchers';
@@ -190,7 +188,7 @@ final class CurlTest extends AbstractClient
             \CURLOPT_URL => $url,
             \CURLOPT_CUSTOMREQUEST => $method,
             \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
-            \CURLOPT_SSL_VERIFYPEER => false
+            \CURLOPT_SSL_VERIFYPEER => false,
         ];
 
         $this->assertEquals(
@@ -227,7 +225,7 @@ final class CurlTest extends AbstractClient
             \CURLOPT_URL => $url . '?foo=bar&crowd=sec',
             \CURLOPT_CUSTOMREQUEST => $method,
             \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
-            \CURLOPT_SSL_VERIFYPEER => false
+            \CURLOPT_SSL_VERIFYPEER => false,
         ];
 
         $this->assertEquals(

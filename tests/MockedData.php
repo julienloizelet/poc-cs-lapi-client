@@ -22,7 +22,6 @@ class MockedData
     public const HTTP_403 = 403;
     public const HTTP_500 = 500;
 
-
     public const DECISIONS_STREAM_LIST = <<<EOT
 {"new": [], "deleted": []}
 EOT;
@@ -34,5 +33,4 @@ EOT;
     public const UNAUTHORIZED = <<<EOT
 {"message":"Unauthorized"}
 EOT;
-
 }
