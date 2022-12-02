@@ -25,10 +25,6 @@ use Psr\Log\LoggerInterface;
 abstract class AbstractClient
 {
     /**
-     * @var string Separator
-     */
-    public const SEP = ',';
-    /**
      * @var array
      */
     protected $configs = [];
@@ -56,7 +52,7 @@ abstract class AbstractClient
     ) {
         $this->configs = $configs;
         $this->requestHandler = ($requestHandler) ?: new Curl($this->configs);
-        $this->url = $this->configs['api_url'];
+        $this->url = $this->getConfig('api_url');
         if (!$logger) {
             $logger = new Logger('null');
             $logger->pushHandler(new NullHandler());
@@ -67,13 +63,11 @@ abstract class AbstractClient
     /**
      * Retrieve a config value by name.
      *
-     * @param mixed $default
-     *
      * @return mixed
      */
-    public function getConfig(string $name, $default = null)
+    public function getConfig(string $name)
     {
-        return (isset($this->configs[$name])) ? $this->configs[$name] : $default;
+        return (isset($this->configs[$name])) ? $this->configs[$name] : null;
     }
 
     /**

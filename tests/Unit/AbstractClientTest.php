@@ -26,6 +26,9 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
  * @uses \CrowdSec\LapiClient\HttpMessage\Response
  * @uses \CrowdSec\LapiClient\Configuration::getConfigTreeBuilder
  * @uses \CrowdSec\LapiClient\Bouncer::formatUserAgent
+ * @uses \CrowdSec\LapiClient\Configuration::addConnectionNodes
+ * @uses \CrowdSec\LapiClient\Configuration::validate
+ * @uses \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::__construct
  *
  * @covers \CrowdSec\LapiClient\AbstractClient::__construct
  * @covers \CrowdSec\LapiClient\AbstractClient::getConfig

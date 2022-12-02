@@ -25,36 +25,24 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
 
 /**
  * @uses \CrowdSec\LapiClient\AbstractClient
- * @uses \CrowdSec\LapiClient\Storage\FileStorage
- * @uses \CrowdSec\LapiClient\Bouncer::shouldLogin
  * @uses \CrowdSec\LapiClient\HttpMessage\Response
  * @uses \CrowdSec\LapiClient\HttpMessage\Request
  * @uses \CrowdSec\LapiClient\HttpMessage\AbstractMessage::getHeaders
  * @uses \CrowdSec\LapiClient\RequestHandler\Curl::createOptions
  * @uses \CrowdSec\LapiClient\RequestHandler\Curl::handle
+ * @uses \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::__construct
  *
  * @covers \CrowdSec\LapiClient\Bouncer::__construct
  * @covers \CrowdSec\LapiClient\Bouncer::configure
- * @covers \CrowdSec\LapiClient\Bouncer::login
- * @covers \CrowdSec\LapiClient\Bouncer::register
  * @covers \CrowdSec\LapiClient\Bouncer::manageRequest
- * @covers \CrowdSec\LapiClient\Bouncer::ensureRegister
- * @covers \CrowdSec\LapiClient\Bouncer::ensureAuth
  * @covers \CrowdSec\LapiClient\Bouncer::getStreamDecisions
- * @covers \CrowdSec\LapiClient\Bouncer::pushSignals
- * @covers \CrowdSec\LapiClient\Bouncer::enroll
+ * @covers \CrowdSec\LapiClient\Bouncer::getFilteredDecisions
  * @covers \CrowdSec\LapiClient\AbstractClient::request
- * @covers \CrowdSec\LapiClient\Bouncer::handleTokenHeader
  * @covers \CrowdSec\LapiClient\Bouncer::formatUserAgent
- * @covers \CrowdSec\LapiClient\Bouncer::areEquals
- * @covers \CrowdSec\LapiClient\Bouncer::generatePassword
- * @covers \CrowdSec\LapiClient\Bouncer::generateRandomString
- * @covers \CrowdSec\LapiClient\Bouncer::generateMachineId
- * @covers \CrowdSec\LapiClient\Bouncer::shouldRefreshCredentials
  * @covers \CrowdSec\LapiClient\Configuration::getConfigTreeBuilder
- * @covers \CrowdSec\LapiClient\Bouncer::handleLogin
- * @covers \CrowdSec\LapiClient\Bouncer::refreshCredentials
- * @covers \CrowdSec\LapiClient\Bouncer::normalizeTags
+ * @covers \CrowdSec\LapiClient\Configuration::addConnectionNodes
+ * @covers \CrowdSec\LapiClient\Configuration::validate
+ *
  */
 final class BouncerTest extends AbstractClient
 {

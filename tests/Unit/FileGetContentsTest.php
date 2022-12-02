@@ -35,29 +35,18 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
  * @uses \CrowdSec\LapiClient\Bouncer::__construct
  * @uses \CrowdSec\LapiClient\Bouncer::configure
  * @uses \CrowdSec\LapiClient\Bouncer::formatUserAgent
- * @uses \CrowdSec\LapiClient\Bouncer::ensureAuth
- * @uses \CrowdSec\LapiClient\Bouncer::ensureRegister
  * @uses \CrowdSec\LapiClient\Bouncer::manageRequest
- * @uses \CrowdSec\LapiClient\Bouncer::shouldRefreshCredentials
- * @uses \CrowdSec\LapiClient\Bouncer::generateMachineId
- * @uses \CrowdSec\LapiClient\Bouncer::generatePassword
- * @uses \CrowdSec\LapiClient\Bouncer::generateRandomString
- * @uses \CrowdSec\LapiClient\Bouncer::refreshCredentials
- * @uses \CrowdSec\LapiClient\Bouncer::areEquals
- * @uses \CrowdSec\LapiClient\Storage\FileStorage::__construct
+ * @uses \CrowdSec\LapiClient\Configuration::addConnectionNodes
+ * @uses \CrowdSec\LapiClient\Configuration::validate
  *
  * @covers \CrowdSec\LapiClient\RequestHandler\FileGetContents::handle
  * @covers \CrowdSec\LapiClient\RequestHandler\FileGetContents::createContextConfig
  * @covers \CrowdSec\LapiClient\RequestHandler\FileGetContents::convertHeadersToString
  * @covers \CrowdSec\LapiClient\RequestHandler\FileGetContents::getResponseHttpCode
- * @covers \CrowdSec\LapiClient\Bouncer::login
- * @covers \CrowdSec\LapiClient\Bouncer::handleTokenHeader
- * @covers \CrowdSec\LapiClient\Bouncer::register
- * @covers \CrowdSec\LapiClient\Bouncer::login
- * @covers \CrowdSec\LapiClient\Bouncer::shouldLogin
- * @covers \CrowdSec\LapiClient\Bouncer::handleLogin
- * @covers \CrowdSec\LapiClient\Bouncer::pushSignals
  * @covers \CrowdSec\LapiClient\Bouncer::getStreamDecisions
+ * @covers \CrowdSec\LapiClient\Bouncer::getFilteredDecisions
+ * @covers \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::__construct
+ * @covers \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::getConfig
  */
 final class FileGetContentsTest extends AbstractClient
 {
@@ -135,6 +124,48 @@ User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
             $expected,
             $contextConfig,
             'Context config must be as expected for GET'
+        );
+
+        $configs = $this->tlsConfigs;
+        $method = 'POST';
+        $parameters = ['machine_id' => 'test', 'password' => 'test'];
+
+        $client = new Bouncer($configs, new FileGetContents($configs));
+        $fgcRequester = $client->getRequestHandler();
+
+        $request = new Request('test-url', $method, ['User-Agent' => TestConstants::USER_AGENT_SUFFIX], $parameters);
+
+        $contextConfig = PHPUnitUtil::callMethod(
+            $fgcRequester,
+            'createContextConfig',
+            [$request]
+        );
+
+        $contextConfig['http']['header'] = str_replace("\r", '', $contextConfig['http']['header']);
+
+        $expected = [
+            'http' => [
+                'method' => $method,
+                'header' => 'Accept: application/json
+Content-Type: application/json
+User-Agent: ' . TestConstants::USER_AGENT_SUFFIX . '
+',
+                'ignore_errors' => true,
+                'content' => '{"machine_id":"test","password":"test"}',
+                'timeout' => TestConstants::API_TIMEOUT,
+            ],
+            'ssl' => [
+                'verify_peer' => true,
+                'local_cert' => 'tls_cert_path_test',
+                'local_pk' => 'tls_key_path_test',
+                'cafile' => 'tls_ca_cert_path_test'
+            ],
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $contextConfig,
+            'Context config must be as expected for POST'
         );
     }
 

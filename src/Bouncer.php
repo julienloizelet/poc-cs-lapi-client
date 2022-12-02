@@ -91,7 +91,7 @@ class Bouncer extends AbstractClient
     }
 
     /**
-     * Format User-Agent header. <PHP CAPI client prefix>_<custom suffix>/<vX.Y.Z>.
+     * Format User-Agent header. <PHP LAPI client prefix>_<custom suffix>/<vX.Y.Z>.
      */
     private function formatUserAgent(array $configs = []): string
     {

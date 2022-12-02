@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace CrowdSec\LapiClient\HttpMessage;
 
 /**
- * HTTP messages consist of requests from a client to CAPI and responses
- * from CAPI to a client.
+ * HTTP messages consist of requests from a client to LAPI and responses
+ * from LAPI to a client.
  *
  * @author    CrowdSec team
  *

@@ -28,6 +28,16 @@ abstract class AbstractClient extends TestCase
         'api_timeout' => TestConstants::API_TIMEOUT,
     ];
 
+    protected $tlsConfigs = [
+        'user_agent_suffix' => TestConstants::USER_AGENT_SUFFIX,
+        'auth_type' => Constants::AUTH_TLS,
+        'api_timeout' => TestConstants::API_TIMEOUT,
+        'tls_cert_path' => 'tls_cert_path_test',
+        'tls_key_path' => 'tls_key_path_test',
+        'tls_verify_peer' => true,
+        'tls_ca_cert_path' => 'tls_ca_cert_path_test'
+    ];
+
     protected function getCurlMock(array $methods = [])
     {
         $methods = array_merge(['exec', 'getResponseHttpCode'], $methods);

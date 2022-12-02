@@ -3,7 +3,7 @@
 namespace CrowdSec\LapiClient\Tests\Integration;
 
 /**
- * Integration Test for watcher.
+ * Integration Test for bouncer client.
  *
  * @author    CrowdSec team
  *

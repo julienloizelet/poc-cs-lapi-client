@@ -32,27 +32,18 @@ use CrowdSec\LapiClient\Tests\PHPUnitUtil;
  * @uses \CrowdSec\LapiClient\Bouncer::__construct
  * @uses \CrowdSec\LapiClient\Bouncer::configure
  * @uses \CrowdSec\LapiClient\Bouncer::formatUserAgent
- * @uses \CrowdSec\LapiClient\Bouncer::ensureAuth
- * @uses \CrowdSec\LapiClient\Bouncer::ensureRegister
- * @uses \CrowdSec\LapiClient\Bouncer::shouldRefreshCredentials
- * @uses \CrowdSec\LapiClient\Bouncer::generateMachineId
- * @uses \CrowdSec\LapiClient\Bouncer::generatePassword
- * @uses \CrowdSec\LapiClient\Bouncer::generateRandomString
- * @uses \CrowdSec\LapiClient\Bouncer::refreshCredentials
- * @uses \CrowdSec\LapiClient\Bouncer::areEquals
- * @uses \CrowdSec\LapiClient\Storage\FileStorage::__construct
+ * @uses \CrowdSec\LapiClient\Configuration::addConnectionNodes
+ * @uses \CrowdSec\LapiClient\Configuration::validate
  *
  * @covers \CrowdSec\LapiClient\RequestHandler\Curl::createOptions
  * @covers \CrowdSec\LapiClient\RequestHandler\Curl::handle
- * @covers \CrowdSec\LapiClient\Bouncer::login
- * @covers \CrowdSec\LapiClient\Bouncer::handleTokenHeader
  * @covers \CrowdSec\LapiClient\Bouncer::getStreamDecisions
- * @covers \CrowdSec\LapiClient\Bouncer::register
- * @covers \CrowdSec\LapiClient\Bouncer::login
- * @covers \CrowdSec\LapiClient\Bouncer::shouldLogin
- * @covers \CrowdSec\LapiClient\Bouncer::handleLogin
- * @covers \CrowdSec\LapiClient\Bouncer::pushSignals
+ * @covers \CrowdSec\LapiClient\Bouncer::getFilteredDecisions
  * @covers \CrowdSec\LapiClient\Bouncer::manageRequest
+ * @covers \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::__construct
+ * @covers \CrowdSec\LapiClient\RequestHandler\AbstractRequestHandler::getConfig
+ * @covers \CrowdSec\LapiClient\RequestHandler\Curl::handleConfigs
+ * @covers \CrowdSec\LapiClient\RequestHandler\Curl::handleMethod
  */
 final class CurlTest extends AbstractClient
 {
@@ -233,5 +224,80 @@ final class CurlTest extends AbstractClient
             $curlOptions,
             'Curl options must be as expected for GET'
         );
+
+        $configs = $this->tlsConfigs;
+        $method = 'POST';
+        $parameters = ['machine_id' => 'test', 'password' => 'test'];
+
+        $client = new Bouncer($configs);
+        $curlRequester = $client->getRequestHandler();
+        $request = new Request($url, $method, ['User-Agent' => TestConstants::USER_AGENT_SUFFIX], $parameters);
+
+        $curlOptions = PHPUnitUtil::callMethod(
+            $curlRequester,
+            'createOptions',
+            [$request]
+        );
+        $expected = [
+            \CURLOPT_HEADER => false,
+            \CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_USERAGENT => TestConstants::USER_AGENT_SUFFIX,
+            \CURLOPT_HTTPHEADER => [
+                'Accept:application/json',
+                'Content-Type:application/json',
+                'User-Agent:' . TestConstants::USER_AGENT_SUFFIX,
+            ],
+            \CURLOPT_POST => true,
+            \CURLOPT_POSTFIELDS => '{"machine_id":"test","password":"test"}',
+            \CURLOPT_URL => $url,
+            \CURLOPT_CUSTOMREQUEST => $method,
+            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
+            \CURLOPT_SSL_VERIFYPEER => true,
+            \CURLOPT_SSLCERT => 'tls_cert_path_test',
+            \CURLOPT_SSLKEY => 'tls_key_path_test',
+            \CURLOPT_CAINFO => 'tls_ca_cert_path_test'
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $curlOptions,
+            'Curl options must be as expected for POST'
+        );
+
+        $method = 'DELETE';
+        $request = new Request($url, $method, ['User-Agent' => TestConstants::USER_AGENT_SUFFIX], $parameters);
+
+        $curlOptions = PHPUnitUtil::callMethod(
+            $curlRequester,
+            'createOptions',
+            [$request]
+        );
+        $expected = [
+            \CURLOPT_HEADER => false,
+            \CURLOPT_RETURNTRANSFER => true,
+            \CURLOPT_USERAGENT => TestConstants::USER_AGENT_SUFFIX,
+            \CURLOPT_HTTPHEADER => [
+                'Accept:application/json',
+                'Content-Type:application/json',
+                'User-Agent:' . TestConstants::USER_AGENT_SUFFIX,
+            ],
+            \CURLOPT_POST => false,
+            \CURLOPT_URL => $url,
+            \CURLOPT_CUSTOMREQUEST => $method,
+            \CURLOPT_TIMEOUT => TestConstants::API_TIMEOUT,
+            \CURLOPT_SSL_VERIFYPEER => true,
+            \CURLOPT_SSLCERT => 'tls_cert_path_test',
+            \CURLOPT_SSLKEY => 'tls_key_path_test',
+            \CURLOPT_CAINFO => 'tls_ca_cert_path_test'
+        ];
+
+        $this->assertEquals(
+            $expected,
+            $curlOptions,
+            'Curl options must be as expected for DELETE'
+        );
+
+
+
     }
 }

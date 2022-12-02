@@ -2,7 +2,7 @@
 
 # CrowdSec LAPI PHP client
 
-> The official PHP client for CrowdSec Local API (LAPI)
+> The official PHP client for the CrowdSec Local API (LAPI)
 
 [![Version](https://img.shields.io/github/v/release/crowdsecurity/php-lapi-client?include_prereleases)](https://github.com/crowdsecurity/php-lapi-client/releases/)
 [![Test suite](https://github.com/crowdsecurity/php-lapi-client/actions/workflows/unit-and-integration-test.yml/badge.svg)](https://github.com/crowdsecurity/php-lapi-client/actions/workflows/unit-and-integration-test.yml)

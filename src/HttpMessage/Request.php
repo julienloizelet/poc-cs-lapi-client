@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace CrowdSec\LapiClient\HttpMessage;
 
 /**
- * Request that will be sent to CAPI.
+ * Request that will be sent to LAPI.
  *
  * @author    CrowdSec team
  *

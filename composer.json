@@ -1,6 +1,6 @@
 {
     "name": "crowdsec/lapi-client",
-    "description": "The official PHP client for CrowdSec Local API (LAPI)",
+    "description": "The official PHP client for the CrowdSec Local API (LAPI)",
     "type": "library",
     "license": "MIT",
     "minimum-stability": "stable",
@@ -10,8 +10,8 @@
         "rest",
         "client",
         "curl",
-        "capi",
-        "watcher"
+        "lapi",
+        "bouncer"
     ],
     "authors": [
         {
