@@ -21,13 +21,13 @@ use Symfony\Component\Config\Definition\Processor;
 class Bouncer extends AbstractClient
 {
     /**
-     * @var string The decisions stream endpoint
-     */
-    public const DECISIONS_STREAM_ENDPOINT = '/v1/decisions/stream';
-    /**
      * @var string The decisions endpoint
      */
     public const DECISIONS_FILTER_ENDPOINT = '/v1/decisions';
+    /**
+     * @var string The decisions stream endpoint
+     */
+    public const DECISIONS_STREAM_ENDPOINT = '/v1/decisions/stream';
     /**
      * @var array
      */
@@ -51,6 +51,20 @@ class Bouncer extends AbstractClient
     }
 
     /**
+     * Process a decisions call to LAPI with some filter(s).
+     *
+     * @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisions
+     */
+    public function getFilteredDecisions(array $filter = []): array
+    {
+        return $this->manageRequest(
+            'GET',
+            self::DECISIONS_FILTER_ENDPOINT,
+            $filter
+        );
+    }
+
+    /**
      * Process a decisions stream call to LAPI.
      *
      * @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisionsStream
@@ -63,20 +77,6 @@ class Bouncer extends AbstractClient
             'GET',
             self::DECISIONS_STREAM_ENDPOINT,
             array_merge(['startup' => $startup ? 'true' : 'false'], $filter)
-        );
-    }
-
-    /**
-     * Process a decisions call to LAPI with some filter(s).
-     *
-     * @see https://crowdsecurity.github.io/api_doc/index.html?urls.primaryName=LAPI#/bouncers/getDecisions
-     */
-    public function getFilteredDecisions(array $filter = []): array
-    {
-        return $this->manageRequest(
-            'GET',
-            self::DECISIONS_FILTER_ENDPOINT,
-            $filter
         );
     }
 

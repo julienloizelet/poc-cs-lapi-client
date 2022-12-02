@@ -27,7 +27,7 @@ class FileLog extends Logger
     /**
      * @var string The logger name
      */
-    public const LOGGER_NAME = 'capi-client-logger';
+    public const LOGGER_NAME = 'lapi-client-logger';
     /**
      * @var string The prod log filename
      */
